@@ -115,16 +115,16 @@ function renderPagination(total, currentPage) {
   const btnInactive = 'bg-white text-gray-600 border-gray-200 hover:border-secondary/50 hover:text-secondary';
   const btnDisabled = 'bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed';
 
-  let html = '<div class="flex items-center gap-2">';
+  let html = '<div class="flex items-center flex-wrap gap-2">';
 
   // Prev
   if (currentPage > 1) {
     html += `<button onclick="window.goToPage(${currentPage - 1})" class="${btnBase} ${btnInactive} px-3 gap-1 w-auto">
-      <span class="material-symbols-outlined text-[16px]">chevron_left</span>Oldingi
+      <span class="material-symbols-outlined text-[16px] sm:block hidden">chevron_left</span>Oldingi
     </button>`;
   } else {
     html += `<button disabled class="${btnBase} ${btnDisabled} px-3 gap-1 w-auto">
-      <span class="material-symbols-outlined text-[16px]">chevron_left</span>Oldingi
+      <span class="material-symbols-outlined text-[16px] sm:block hidden">chevron_left</span>Oldingi
     </button>`;
   }
 
@@ -140,17 +140,17 @@ function renderPagination(total, currentPage) {
   // Next
   if (currentPage < totalPages) {
     html += `<button onclick="window.goToPage(${currentPage + 1})" class="${btnBase} ${btnInactive} px-3 gap-1 w-auto">
-      Keyingi<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+      Keyingi<span class="material-symbols-outlined text-[16px] sm:block hidden">chevron_right</span>
     </button>`;
   } else {
     html += `<button disabled class="${btnBase} ${btnDisabled} px-3 gap-1 w-auto">
-      Keyingi<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+      Keyingi<span class="material-symbols-outlined text-[16px] sm:block hidden">chevron_right</span>
     </button>`;
   }
 
   // Total info
-  html += `<span class="text-sm text-gray-400 ml-2">${total} ta natija</span>`;
-  html += '</div>';
+  // html += `<span class="text-sm text-gray-400 ml-2">${total} ta natija</span>`;
+  // html += '</div>';
 
   container.innerHTML = html;
 }
