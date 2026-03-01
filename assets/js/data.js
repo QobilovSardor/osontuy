@@ -1,0 +1,209 @@
+// ============================
+// ToyXona — Static Data
+// ============================
+
+// ── TO'YXONALAR ──
+const venues = [
+  {
+    id: 1,
+    title: "Yakka Saroy",
+    category: "toyxona",
+    image: "https://avatars.mds.yandex.net/get-altay/14782168/2a0000019a929c4fad0a92be4e6af3f4ee21/XXXL",
+    rating: 5.0,
+    location: "Termiz, Abdulla Qahhor koʻchasi, 40",
+    description: "Markazda joylashgan hashamatli to'yxona. 500 kishilik zal, zamonaviy dizayn va yuqori sifatli xizmat.",
+    seats: "500"
+  },
+  {
+    id: 1212,
+    title: "O'zbegim",
+    category: "toyxona",
+    image: "https://avatars.mds.yandex.net/get-altay/15366886/2a00000196c01878e531a0f2bfdbd7967570/orig",
+    rating: 4.8,
+    location: "Termiz, Yulduz mahalla fuqarolar yigʻini, Ibn-Sino koʻchasi, 9L",
+    description: "Markazda joylashgan hashamatli to'yxona. 500 kishilik zal, zamonaviy dizayn va yuqori sifatli xizmat."
+  },
+  {
+    id: 1211,
+    title: "Azizbek",
+    category: "toyxona",
+    image: "https://avatars.mds.yandex.net/get-altay/16319048/2a000001977437a92a1e9441fdc05c401a72/XXL_height",
+    rating: 4.9,
+    location: "Termiz, Alisher Navoiy koʻchasi, 46",
+    description: "Markazda joylashgan hashamatli to'yxona. 500 kishilik zal, zamonaviy dizayn va yuqori sifatli xizmat.",
+    price: "30000–35000 uzs"
+  },
+  {
+    id: 1211,
+    title: "Otabek To'yxonasi",
+    category: "toyxona",
+    image: "https://avatars.mds.yandex.net/get-altay/14675612/2a000001973b9f470d6a403d499521fbee21/L_height",
+    rating: 5.0,
+    location: "Termiz, Bogʻzor mahalla fuqarolar yigʻini, Islom Karimov koʻchasi, 115",
+    description: "Markazda joylashgan hashamatli to'yxona. 500 kishilik zal, zamonaviy dizayn va yuqori sifatli xizmat."
+  },
+  {
+    id: 1211,
+    title: "Grand Almaz",
+    category: "toyxona",
+    image: "https://avatars.mds.yandex.net/get-altay/16899665/2a00000198ff244e7b41ac05451e38442035/XXXL",
+    rating: 4.9,
+    location: "Termiz, Doʻstlik mahalla fuqarolar yigʻini, Taraqqiyot koʻchasi, 17B",
+    description: "Markazda joylashgan hashamatli to'yxona. 500 kishilik zal, zamonaviy dizayn va yuqori sifatli xizmat."
+  },
+  {
+    id: 7,
+    title: "Serenada",
+    category: "toyxona",
+    image: "https://avatars.mds.yandex.net/get-altay/13220791/2a00000193f360445162a9e321849ec68f16/XXXL",
+    rating: 5.0,
+    location: "Termiz, Oʻzbekiston mahalla fuqarolar yigʻini",
+    description: "Termizdagi eng katta va hashamatli to'yxona. 1000 kishilik zal, ajoyib manzara."
+  },
+
+  // ── BARBERSHOP ──
+  {
+    id: 2,
+    title: "Seven",
+    category: "barbershop",
+    image: "https://avatars.mds.yandex.net/get-altay/15344725/2a000001982d5c1f0595aba2573f130abfaa/XXXL",
+    rating: 4.9,
+    location: "Termiz, Taraqqiyot koʻchasi, 7",
+    description: "Zamonaviy sartaroshxona. Professional ustalar bilan klassik va zamonaviy soch turmagi."
+  },
+  {
+    id: 8,
+    title: "Barbershop 23",
+    category: "barbershop",
+    image: "https://avatars.mds.yandex.net/get-altay/7636462/2a00000184cd61bec2ee46d21dae0d9de374/XXXL",
+    rating: 5.0,
+    location: "Termiz, Bogʻlshamol mahalla fuqarolar yigʻini, Alisher Navoiy koʻchasi, 15",
+    description: "Italyan uslubidagi klassik sartaroshxona. Dadillik va nafosatning uyg'unligi."
+  },
+
+  // ── SALONLAR ──
+  {
+    id: 3,
+    title: "Beauty Flower",
+    category: "salon",
+    image: "https://avatars.mds.yandex.net/get-altay/13793720/2a00000193654778cc4c45837f85627bc1f7/L_height",
+    rating: 4.2,
+    location: "Termiz, Islom Karimov koʻchasi, 66/6",
+    description: "Nikohlarga maxsus go'zallik saloni. Makiyaj, soch turmaklash va spa xizmatlari."
+  },
+  {
+    id: 9,
+    title: "Beauty day",
+    category: "salon",
+    image: "https://avatars.mds.yandex.net/get-altay/15283141/2a00000194bb3f251cda1b6630abefa5db19/XXXL",
+    rating: 4.3,
+    location: "Termiz,Taraqqiyot koʻchasi, 29",
+    description: "Kelin sochini va makiyajini tayyorlashda O'zbekistondagi eng yaxshi salon."
+  },
+
+  // ── KORTEJ ──
+  {
+    id: 124,
+    title: "Elite Kortej",
+    category: "kortej",
+    image: "https://images.unsplash.com/photo-1617469767824-6dde2d985f49?w=800",
+    rating: 4.6,
+    location: "Toshkent, Shayxontohur",
+    description: "Hashamatli nikoh kortejlari. Mercedes, BMW va Rolls-Royce avtomobillari ijarasiga."
+  },
+
+  // ── SAN'ATKORLAR ──
+  {
+    id: 126,
+    title: "Shohruhxon",
+    category: "sanatkor",
+    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800",
+    rating: 5.0,
+    location: "Toshkent, Yunusobod"
+  },
+  {
+    id: 712,
+    title: "Rayhon",
+    category: "sanatkor",
+    image: "https://yt3.googleusercontent.com/ytc/AIdro_kyue_qJnSbPYQPMUikN7S6AtTeO8FC3YWA5fukhvzcQl8=s900-c-k-c0x00ffffff-no-rj",
+    rating: 4.9,
+    location: "Toshkent, Mirzo Ulug'bek"
+  },
+  {
+    id: 812,
+    title: "Munisa Rizayeva",
+    category: "sanatkor",
+    image: "https://portal.madaniyat.uz/media/artists/gLNs9fT9bXQ.jpg",
+    rating: 4.8,
+    location: "Toshkent, Chilonzor"
+  },
+  {
+    id: 912,
+    title: "Ziyoda",
+    category: "sanatkor",
+    image: "https://portal.madaniyat.uz/media/artists/m1000x1000.jfif",
+    rating: 4.9,
+    location: "Toshkent, Shayxontohur"
+  },
+
+  // ── BOSHLOVCHILAR ──
+  {
+    id: 6,
+    title: "Jahongir Tojimatov",
+    category: "boshlovchi",
+    image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800",
+    rating: 4.9,
+    location: "Toshkent, Olmazor",
+    description: "Tajribali to'y boshlovchisi. O'zbek va rus tillarida professional boshlovchilik xizmati."
+  },
+  {
+    id: 7,
+    title: "Sardor Xasanov",
+    category: "boshlovchi",
+    image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800",
+    rating: 4.8,
+    location: "Toshkent, Yunusobod",
+    description: "Zamonaviy uslubda to'y va tadbirlarni olib boruvchi professional boshlovchi."
+  },
+  {
+    id: 8,
+    title: "Bobur Rahimov",
+    category: "boshlovchi",
+    image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800",
+    rating: 4.7,
+    location: "Toshkent, Chilonzor",
+    description: "10 yillik tajribaga ega boshlovchi. Hazilkash va jonli muloqot uslubi."
+  },
+  {
+    id: 9,
+    title: "Sherzod Tursunov",
+    category: "boshlovchi",
+    image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800",
+    rating: 4.9,
+    location: "Toshkent, Mirzo Ulug'bek",
+    description: "O'zbek, rus va ingliz tillarida boshlovchilik. Xalqaro tadbirlar mutaxassisi."
+  },
+];
+
+// ── HELPER FUNCTIONS ──
+
+// Get all venues
+function getAllVenues() {
+  return venues;
+}
+
+// Filter by category
+function getByCategory(category) {
+  if (category === 'all') return venues;
+  return venues.filter(v => v.category === category);
+}
+
+// Filter by location (viloyat or any keyword)
+function getByLocation(viloyat) {
+  return venues.filter(v => v.location.toLowerCase().includes(viloyat.toLowerCase()));
+}
+
+// Get single venue by id
+function getVenueById(id) {
+  return venues.find(v => v.id === id);
+}

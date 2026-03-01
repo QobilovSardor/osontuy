@@ -15,9 +15,14 @@ const CATEGORY_LABELS = {
   boshlovchi: 'Boshlovchilar',
 };
 
-// ---- Fetch all venues ----
+// ---- Fetch all venues (now uses local data.js, no server needed) ----
 async function fetchVenues() {
-  const res = await fetch(API_URL);
+  // Use static data from data.js (loaded via <script> before app.js)
+  if (typeof venues !== 'undefined') {
+    return Promise.resolve([...venues]);
+  }
+  // Fallback: try JSON Server if data.js is somehow not loaded
+  const res = await fetch('http://localhost:3000/venues');
   if (!res.ok) throw new Error(`Server bilan aloqa yo'q`);
   return res.json();
 }
