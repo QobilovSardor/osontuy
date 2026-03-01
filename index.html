@@ -721,14 +721,26 @@
             </form>
 
             <!-- Action buttons -->
-            <div class="flex gap-3">
+            <div class="flex gap-3 flex-wrap">
               <button id="inv-copy" onclick="copyInvitation()"
-                class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full border border-[#e8d5f5] text-sm font-semibold text-gray-600 bg-white hover:bg-gray-50 transition-all">
+                class="flex-1 hidden items-center justify-center gap-2 py-2.5 rounded-full border border-[#e8d5f5] text-sm font-semibold text-gray-600 bg-white hover:bg-gray-50 transition-all">
                 📋 Nusxa olish
               </button>
               <button onclick="printInvitation()"
-                class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full border border-[#e8d5f5] text-sm font-semibold text-gray-600 bg-white hover:bg-gray-50 transition-all">
+                class="flex-1 hidden items-center justify-center gap-2 py-2.5 rounded-full border border-[#e8d5f5] text-sm font-semibold text-gray-600 bg-white hover:bg-gray-50 transition-all">
                 🖨 Chop etish
+              </button>
+              <button id="inv-download-btn" onclick="downloadInvitation()"
+                class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-white text-sm font-semibold transition-all shadow-md"
+                style="background:linear-gradient(135deg,#FF3CAC 0%,#9333EA 100%);box-shadow:0 4px 14px rgba(147,51,234,0.3)">
+                <span id="inv-dl-text">JPG yuklash</span>
+                <span id="inv-dl-spin" class="hidden">
+                  <svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                  </svg>
+                  Yuklanmoqda...
+                </span>
               </button>
             </div>
           </div>
@@ -867,7 +879,7 @@
                     Versal Saroyi</p>
                   <p id="card-address"
                     class="font-serif italic text-[11px] text-[#6b5a2e] leading-relaxed transition-all duration-300 text-center">
-                    Toshkent shahri</p>
+                    Termiz shahri</p>
 
                   <!-- Time -->
                   <p id="card-time" class="text-[#B8860B] text-[10px] font-bold tracking-widest uppercase">SOAT: 18:00
@@ -964,7 +976,7 @@
         card.groom.textContent = (fields.groom.value.trim().toUpperCase()) || 'KUYOV ISMI';
         card.bride.textContent = (fields.bride.value.trim().toUpperCase()) || 'KELIN ISMI';
         card.venue.textContent = fields.venue.value.trim() || 'Versal Saroyi';
-        card.address.textContent = fields.address.value.trim() || 'Toshkent shahri';
+        card.address.textContent = fields.address.value.trim() || 'Termiz shahri';
         card.time.textContent = `SOAT: ${fields.time.value.trim() || '18:00'} DA`;
         // Parse date
         const rawDate = fields.date.value.trim();
@@ -1015,7 +1027,7 @@
         shimmer.style.transform = 'translateX(200%)';
         setTimeout(() => { shimmer.style.transform = 'translateX(-100%)'; }, 10);
 
-        const prompt = `Kuyov: ${fields.groom.value}, Kelin: ${fields.bride.value}, To'yxona: ${fields.venue.value || 'Versal Saroyi'}, Manzil: ${fields.address.value || "Toshkent shahri"}, Sana: ${fields.date.value || '15 Sentyabr, 2025'}, Soat: ${fields.time.value || '18:00'}. Shu ma'lumotlar asosida o'zbek tilida mehmonlarga murojaat matni yoz.`;
+        const prompt = `Kuyov: ${fields.groom.value}, Kelin: ${fields.bride.value}, To'yxona: ${fields.venue.value || 'Versal Saroyi'}, Manzil: ${fields.address.value || "Termiz shahri"}, Sana: ${fields.date.value || '15 Sentyabr, 2025'}, Soat: ${fields.time.value || '18:00'}. Shu ma'lumotlar asosida o'zbek tilida mehmonlarga murojaat matni yoz.`;
 
         try {
           const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -1074,6 +1086,52 @@
       // ===== Print =====
       function printInvitation() { window.print(); }
       window.printInvitation = printInvitation;
+
+      // ===== Download as JPG =====
+      async function downloadInvitation() {
+        const btn = document.getElementById('inv-download-btn');
+        const dlText = document.getElementById('inv-dl-text');
+        const dlSpin = document.getElementById('inv-dl-spin');
+        const card = document.getElementById('inv-card');
+
+        // Loading state
+        btn.disabled = true;
+        dlText.classList.add('hidden');
+        dlSpin.classList.remove('hidden');
+
+        try {
+          // Temporarily hide the dashed border overlay (z-10 div) for cleaner render
+          const dashedBorder = card.querySelector('.absolute.inset-\\[14px\\]');
+
+          const canvas = await html2canvas(card, {
+            scale: 3,           // 3× for crisp high-res JPG
+            useCORS: true,      // allow cross-origin images
+            allowTaint: false,
+            backgroundColor: '#FAF6EE',
+            logging: false,
+          });
+
+          // Convert canvas → JPG blob → download
+          canvas.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const groomName = (document.getElementById('inv-groom').value || 'Kuyov').trim();
+            const brideName = (document.getElementById('inv-bride').value || 'Kelin').trim();
+            a.href = url;
+            a.download = `Taklifnoma_${groomName}_${brideName}.jpg`;
+            a.click();
+            URL.revokeObjectURL(url);
+          }, 'image/jpeg', 0.95);
+        } catch (err) {
+          console.error('JPG yuklashda xatolik:', err);
+          alert('Rasmni yuklab bo\'lmadi. Iltimos qayta urinib ko\'ring.');
+        } finally {
+          btn.disabled = false;
+          dlText.classList.remove('hidden');
+          dlSpin.classList.add('hidden');
+        }
+      }
+      window.downloadInvitation = downloadInvitation;
     </script>
 
     <style>
@@ -1171,6 +1229,8 @@
     </div>
   </footer>
 
+  <!-- html2canvas for JPG download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <!-- AOS init -->
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <!-- Shared app logic -->
