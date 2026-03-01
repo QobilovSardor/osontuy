@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html class="light" lang="uz">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Osonto'y</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- AOS -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&amp;family=Jost:wght@300;400;500;600&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#7B2FF7",
+            secondary: "#FF3CAC",
+            gold: "#F5D06A",
+            "text-main": "#1e1b26", // Deep charcoal/navy for main text
+            "text-muted": "#645e70", // Muted text
+            "background-cream": "#FDF6EC",
+            "surface-light": "#FFFFFF",
+          },
+          fontFamily: {
+            sans: ['Jost', 'sans-serif'],
+            serif: ['Cormorant Garamond', 'serif'],
+            display: ['Jost', 'sans-serif'],
+          },
+          backgroundImage: {
+            'gradient-romantic': 'linear-gradient(135deg, #FF3CAC 0%, #7B2FF7 100%)',
+            'glass-gradient': 'linear-gradient(145deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.3) 100%)',
+            'bg-gradient-light': 'linear-gradient(to bottom, #FDF6EC 0%, #FFFFFF 100%)',
+          },
+          borderRadius: {
+            'xl': '1.5rem',
+            '2xl': '2rem',
+          }
+        },
+      },
+    }
+  </script>
+  <style>
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    .glass-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+    }
+
+    .text-gradient {
+      background: linear-gradient(135deg, #FF3CAC 0%, #7B2FF7 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .text-gold-gradient {
+      background: linear-gradient(135deg, #F5D06A 0%, #d4a017 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    body {
+      background: linear-gradient(to bottom, #FDF6EC 0%, #FFFFFF 100%);
+    }
+
+    /* Category pills */
+    .pill-active {
+      background: linear-gradient(135deg, #FF3CAC 0%, #7B2FF7 100%);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 15px rgba(123, 47, 247, 0.3);
+    }
+
+    .pill-inactive {
+      background: #fff;
+      color: #645e70;
+      border: 1.5px solid #e5e7eb;
+    }
+
+    .pill-inactive:hover {
+      color: #FF3CAC;
+      border-color: rgba(255, 60, 172, 0.3);
+      box-shadow: 0 2px 8px rgba(255, 60, 172, 0.1);
+    }
+
+    /* Venue cards from API */
+    .venue-card {
+      opacity: 0;
+    }
+
+    .price-badge {
+      background: linear-gradient(135deg, rgba(255, 60, 172, 0.1) 0%, rgba(123, 47, 247, 0.1) 100%);
+      color: #7B2FF7;
+      border: 1px solid rgba(123, 47, 247, 0.2);
+    }
+
+    .korish-btn {
+      background: linear-gradient(135deg, #FF3CAC 0%, #7B2FF7 100%);
+      box-shadow: 0 4px 15px rgba(123, 47, 247, 0.25);
+    }
+
+    /* Cards fade for filter */
+    #venues-grid .venue-card {
+      transition: opacity 0.3s ease;
+    }
+  </style>
+</head>
+
+<body class="text-text-main font-sans min-h-screen selection:bg-secondary selection:text-white overflow-x-hidden">
+  <header class="fixed top-0 w-full z-50 glass border-b border-white/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <div class="flex items-center gap-2">
+          <span class="text-3xl font-serif font-bold text-text-main tracking-wide">Oson<span
+              class="text-secondary">to'y</span></span>
+        </div>
+        <nav class="hidden md:flex items-center gap-8">
+          <a class="text-sm font-medium text-text-main hover:text-secondary transition-colors" href="#">To'yxonalar</a>
+          <a class="text-sm font-medium text-text-main hover:text-secondary transition-colors"
+            href="#kategoriya">Xizmatlar</a>
+          <a class="text-sm font-medium text-text-main hover:text-secondary transition-colors" href="#">Biz
+            haqimizda</a>
+        </nav>
+        <div class="flex items-center gap-4">
+          <button class="hidden sm:flex text-sm font-medium hover:text-secondary text-text-muted transition-colors">
+            Ro'yxatdan o'tish
+          </button>
+          <button
+            class="bg-gradient-romantic hover:opacity-90 transition-opacity text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-primary/30 flex items-center gap-2">
+            <span>Kirish</span>
+            <span class="material-symbols-outlined text-[18px]">login</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main class="pt-20">
+    <div class="relative min-h-[90vh] flex items-center">
+      <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-secondary/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[10%] right-[-5%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[100px]"></div>
+      </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div class="flex flex-col gap-8 z-10">
+            <h1 data-hero="h1" class="font-serif text-5xl md:text-7xl font-bold leading-[1.1] text-text-main">
+              Eng muhim <br />
+              <span class="text-gradient">Kuningiz uchun</span>
+            </h1>
+            <p data-hero="p" class="text-lg text-text-muted max-w-lg font-light leading-relaxed">
+              Orzuingizdagi to'yni rejalashtiring va eng yaxshi takliflarni toping. Biz sizga eng hashamatli restoran va
+              bazmgohlarni taqdim etamiz.
+            </p>
+            <div data-hero="search"
+              class="glass p-2 rounded-2xl flex flex-col sm:flex-row gap-2 max-w-xl w-full mt-4 ring-1 ring-white/50 shadow-xl shadow-primary/5">
+              <div class="flex-1 flex items-center px-4 h-14 bg-white/60 rounded-xl border border-white/40">
+                <span class="material-symbols-outlined text-text-muted mr-3">search</span>
+                <input
+                  class="bg-transparent border-none focus:ring-0 text-text-main placeholder-text-muted/70 w-full h-full text-base"
+                  placeholder="To'yxona nomi yoki manzil" type="text" />
+              </div>
+              <button
+                class="bg-gradient-romantic h-14 px-8 rounded-xl text-white font-bold text-base shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all flex items-center justify-center gap-2 sm:w-auto w-full">
+                Qidirish
+              </button>
+            </div>
+            <div class="flex items-center gap-6 text-sm text-text-muted pt-2">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-gold">verified</span>
+                <span>500+ To'yxonalar</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-gold">favorite</span>
+                <span>10k+ Baxtli juftliklar</span>
+              </div>
+            </div>
+          </div>
+          <div class="relative h-[600px] w-full hidden lg:block">
+            <div
+              class="absolute inset-0 rounded-[4rem] overflow-hidden border border-white/60 shadow-2xl shadow-primary/10 transform rotate-2 hover:rotate-0 transition-transform duration-700">
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-background-cream/40 via-transparent to-transparent z-10">
+              </div>
+              <div
+                class="bg-cover bg-center w-full h-full transform scale-105 hover:scale-100 transition-transform duration-1000"
+                data-alt="Luxurious wedding hall with crystal chandeliers and floral decorations"
+                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA81IZhsE1beUwkvHdd8oohyUBKD2emWPlptjJqXPdSwLwR8kR2TRKWkX6fK6r4MUfpQoA9g_t8TlP4JBfc0onJzuPvSRfdsKWDaL-wWAOXfPyvWbrC0CY8jtC0nCwhuKFqsvA9vkj2U1H3M5nyUVaihRjuc8sZ6d4jYYPDiPDes8g3Z8FUmAz9sen4b48pYBAZVyGhwuBosSl6xKpw4HIkYvhNyg0QVuvyxUFnO_TzY-VnnoOUrYLL1n5qDXSN88dJZ0QEz4-O1Vc');">
+              </div>
+            </div>
+            <div class="absolute bottom-12 -left-8 glass-card p-4 rounded-2xl flex items-center gap-4 animate-bounce"
+              style="animation-duration: 3s;">
+              <div class="size-12 rounded-full bg-gradient-romantic flex items-center justify-center text-white">
+                <span class="material-symbols-outlined">celebration</span>
+              </div>
+            </div>
+            <div class="absolute top-20 -right-4 size-16 bg-secondary/20 blur-xl rounded-full"></div>
+            <div class="absolute bottom-40 -left-4 size-24 bg-primary/20 blur-xl rounded-full"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ========== DYNAMIC KATEGORIYA SECTION ========= -->
+    <section id="kategoriya" class="py-20 bg-white/50 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Section header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+          <div data-aos="fade-right">
+            <h2 class="font-serif text-4xl font-bold text-text-main mb-2">Kategoriya bo'yicha toping</h2>
+            <div class="h-1 w-20 bg-gradient-romantic rounded-full"></div>
+          </div>
+        </div>
+
+        <!-- Category pills -->
+        <div class="flex flex-wrap gap-3 mb-10" id="category-pills" data-aos="fade-up" data-aos-delay="100">
+          <button data-cat="all"
+            class="pill-btn pill-active px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300">Barchasi</button>
+          <button data-cat="toyxona"
+            class="pill-btn pill-inactive px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300">To'yxonalar</button>
+          <button data-cat="barbershop"
+            class="pill-btn pill-inactive px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300">Barbershop</button>
+          <button data-cat="salon"
+            class="pill-btn pill-inactive px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300">Salonlar</button>
+          <button data-cat="kortej"
+            class="pill-btn pill-inactive px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300">Kortej</button>
+          <button data-cat="sanatkor"
+            class="pill-btn pill-inactive px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300">San'atkorlar</button>
+          <button data-cat="boshlovchi"
+            class="pill-btn pill-inactive px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300">Boshlovchilar</button>
+        </div>
+
+        <!-- Venue cards grid -->
+        <div id="venues-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[300px]">
+          <!-- Cards injected by JS -->
+          <div class="col-span-3 flex items-center justify-center py-20">
+            <div class="flex flex-col items-center gap-3 text-text-muted">
+              <span class="material-symbols-outlined text-5xl text-primary/30 animate-spin"
+                style="animation-duration:1.5s">progress_activity</span>
+              <p>Yuklanmoqda...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Server error fallback (hidden by default) -->
+        <div id="api-error" class="hidden mt-8 text-center bg-orange-50 border border-orange-200 rounded-2xl p-8">
+          <span class="material-symbols-outlined text-5xl text-orange-300 mb-3 block">wifi_off</span>
+          <p class="text-orange-700 font-semibold">JSON Server ulanmagan</p>
+          <p class="text-orange-500 text-sm mt-1">Terminalda <code
+              class="bg-orange-100 px-2 py-0.5 rounded">npx json-server db.json</code> ni ishga tushiring</p>
+        </div>
+
+      </div>
+    </section>
+    <!-- ========== AI TAKLIFNOMA SECTION ========== -->
+    <section id="taklifnoma" class="py-24 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent -z-10"></div>
+      <div class="absolute bottom-0 left-0 w-96 h-96 bg-secondary/5 blur-[100px] rounded-full -z-10"></div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-14 items-start">
+
+          <!-- ===== LEFT: FORM ===== -->
+          <div class="space-y-7" data-aos="fade-right">
+            <!-- Badge -->
+            <div
+              class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-secondary/40 bg-gradient-to-r from-secondary/10 to-primary/10 w-fit">
+              <span class="text-transparent bg-clip-text"
+                style="background:linear-gradient(135deg,#FF3CAC,#9333EA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;font-size:0.75rem;letter-spacing:0.08em;">✦
+                YANGI FUNKSIYA</span>
+            </div>
+            <!-- Heading -->
+            <div>
+              <h2 class="font-serif text-4xl md:text-5xl font-bold text-text-main leading-tight">AI bilan
+                taklifnoma<br />yarating</h2>
+              <p class="text-text-muted mt-3 leading-relaxed text-sm max-w-sm">Sun'iy intellekt yordamida she'riy
+                taklifnomangizni bir necha soniyada yarating — bepul va chiroyli.</p>
+            </div>
+
+            <!-- Form -->
+            <form id="inv-form" class="space-y-4">
+              <!-- Row 1: Names -->
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-500 mb-1.5 ml-1">Kuyov ismi va familiyasi</label>
+                  <input id="inv-groom" type="text" placeholder="Jasur Karimov" required class="inv-input w-full px-5 py-3 rounded-full border border-[#e8d5f5] text-sm text-gray-800 bg-white/80 outline-none transition-all placeholder-gray-400
+                    focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:bg-white" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-gray-500 mb-1.5 ml-1">Kelin ismi va familiyasi</label>
+                  <input id="inv-bride" type="text" placeholder="Malika Rahimova" required class="inv-input w-full px-5 py-3 rounded-full border border-[#e8d5f5] text-sm text-gray-800 bg-white/80 outline-none transition-all placeholder-gray-400
+                    focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:bg-white" />
+                </div>
+              </div>
+              <!-- Row 2: Venue -->
+              <div>
+                <label class="block text-xs font-semibold text-gray-500 mb-1.5 ml-1">To'yxona nomi</label>
+                <input id="inv-venue" type="text" placeholder="Versal Saroyi" class="inv-input w-full px-5 py-3 rounded-full border border-[#e8d5f5] text-sm text-gray-800 bg-white/80 outline-none transition-all placeholder-gray-400
+                  focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:bg-white" />
+              </div>
+              <!-- Row 3: Address -->
+              <div>
+                <label class="block text-xs font-semibold text-gray-500 mb-1.5 ml-1">Manzil</label>
+                <input id="inv-address" type="text" placeholder="Toshkent shahri, Chilonzor tumani" class="inv-input w-full px-5 py-3 rounded-full border border-[#e8d5f5] text-sm text-gray-800 bg-white/80 outline-none transition-all placeholder-gray-400
+                  focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:bg-white" />
+              </div>
+              <!-- Row 4: Date + Time -->
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-500 mb-1.5 ml-1">To'y sanasi</label>
+                  <input id="inv-date" type="text" placeholder="15 Sentyabr, 2025" class="inv-input w-full px-5 py-3 rounded-full border border-[#e8d5f5] text-sm text-gray-800 bg-white/80 outline-none transition-all placeholder-gray-400
+                    focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:bg-white" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-gray-500 mb-1.5 ml-1">Soat</label>
+                  <input id="inv-time" type="text" placeholder="18:00" class="inv-input w-full px-5 py-3 rounded-full border border-[#e8d5f5] text-sm text-gray-800 bg-white/80 outline-none transition-all placeholder-gray-400
+                    focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:bg-white" />
+                </div>
+              </div>
+              <!-- Submit -->
+              <button type="submit" id="inv-btn"
+                class="w-full py-4 rounded-full text-white font-bold text-base shadow-lg transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden"
+                style="background:linear-gradient(135deg,#FF3CAC 0%,#9333EA 100%);box-shadow:0 8px 25px rgba(147,51,234,0.35)">
+                <span id="inv-btn-text">✦ Taklifnoma Yaratish (Bepul)</span>
+                <span id="inv-btn-spinner" class="hidden">
+                  <svg class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                  </svg>
+                  AI yaratmoqda...
+                </span>
+                <!-- shimmer overlay -->
+                <span class="absolute inset-0 pointer-events-none" id="inv-shimmer" style="background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.2) 50%,transparent 100%);
+                  transform:translateX(-100%);transition:transform 0.6s ease;"></span>
+              </button>
+            </form>
+
+            <!-- Action buttons -->
+            <div class="flex gap-3">
+              <button id="inv-copy" onclick="copyInvitation()"
+                class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full border border-[#e8d5f5] text-sm font-semibold text-gray-600 bg-white hover:bg-gray-50 transition-all">
+                📋 Nusxa olish
+              </button>
+              <button onclick="printInvitation()"
+                class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full border border-[#e8d5f5] text-sm font-semibold text-gray-600 bg-white hover:bg-gray-50 transition-all">
+                🖨 Chop etish
+              </button>
+            </div>
+          </div>
+
+          <!-- ===== RIGHT: INVITATION CARD ===== -->
+          <div class="flex justify-center" data-aos="fade-left">
+            <div class="relative">
+              <!-- Glow -->
+              <div class="absolute inset-0 bg-[#B8860B]/15 blur-[50px] rounded-full scale-90 translate-y-4"></div>
+
+              <!-- Card -->
+              <div id="inv-card"
+                class="relative w-[380px] min-h-[560px] rounded-[18px] flex flex-col items-center text-center overflow-hidden print-card"
+                style="background:#FAF6EE;box-shadow:0 20px 60px rgba(184,134,11,0.25),0 4px 20px rgba(0,0,0,0.08);">
+
+                <!-- Dashed inner border -->
+                <div
+                  class="absolute inset-[14px] border border-dashed border-[#B8860B] rounded-[12px] pointer-events-none z-10">
+                </div>
+
+                <!-- SVG Corner ornaments -->
+                <svg class="absolute top-0 left-0 w-20 h-20" viewBox="0 0 80 80" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 8 Q8 35 35 35" stroke="#B8860B" stroke-width="1" fill="none" />
+                  <path d="M8 8 C8 8 20 10 25 20 C30 30 35 35 35 35" stroke="#B8860B" stroke-width="0.8" fill="none" />
+                  <circle cx="8" cy="8" r="2.5" fill="#B8860B" />
+                  <circle cx="35" cy="35" r="1.5" fill="#B8860B" />
+                  <path d="M14 8 Q14 28 28 28" stroke="#B8860B" stroke-width="0.5" fill="none" opacity="0.5" />
+                  <path d="M8 14 Q28 14 28 28" stroke="#B8860B" stroke-width="0.5" fill="none" opacity="0.5" />
+                  <path d="M10 20 C12 16 16 12 20 10" stroke="#B8860B" stroke-width="0.8" fill="none" />
+                  <path d="M20 10 C22 9 24 10 23 13 C22 16 19 16 18 14" stroke="#B8860B" stroke-width="0.7"
+                    fill="#B8860B" fill-opacity="0.1" />
+                  <path d="M16 23 C14 21 13 18 15 16 C17 14 20 16 19 19" stroke="#B8860B" stroke-width="0.7"
+                    fill="#B8860B" fill-opacity="0.1" />
+                </svg>
+                <svg class="absolute top-0 right-0 w-20 h-20" viewBox="0 0 80 80" fill="none"
+                  xmlns="http://www.w3.org/2000/svg" style="transform:scaleX(-1)">
+                  <path d="M8 8 Q8 35 35 35" stroke="#B8860B" stroke-width="1" fill="none" />
+                  <path d="M8 8 C8 8 20 10 25 20 C30 30 35 35 35 35" stroke="#B8860B" stroke-width="0.8" fill="none" />
+                  <circle cx="8" cy="8" r="2.5" fill="#B8860B" />
+                  <circle cx="35" cy="35" r="1.5" fill="#B8860B" />
+                  <path d="M14 8 Q14 28 28 28" stroke="#B8860B" stroke-width="0.5" fill="none" opacity="0.5" />
+                  <path d="M8 14 Q28 14 28 28" stroke="#B8860B" stroke-width="0.5" fill="none" opacity="0.5" />
+                  <path d="M10 20 C12 16 16 12 20 10" stroke="#B8860B" stroke-width="0.8" fill="none" />
+                  <path d="M20 10 C22 9 24 10 23 13 C22 16 19 16 18 14" stroke="#B8860B" stroke-width="0.7"
+                    fill="#B8860B" fill-opacity="0.1" />
+                  <path d="M16 23 C14 21 13 18 15 16 C17 14 20 16 19 19" stroke="#B8860B" stroke-width="0.7"
+                    fill="#B8860B" fill-opacity="0.1" />
+                </svg>
+                <svg class="absolute bottom-0 left-0 w-20 h-20" viewBox="0 0 80 80" fill="none"
+                  xmlns="http://www.w3.org/2000/svg" style="transform:scaleY(-1)">
+                  <path d="M8 8 Q8 35 35 35" stroke="#B8860B" stroke-width="1" fill="none" />
+                  <path d="M8 8 C8 8 20 10 25 20 C30 30 35 35 35 35" stroke="#B8860B" stroke-width="0.8" fill="none" />
+                  <circle cx="8" cy="8" r="2.5" fill="#B8860B" />
+                  <circle cx="35" cy="35" r="1.5" fill="#B8860B" />
+                  <path d="M10 20 C12 16 16 12 20 10" stroke="#B8860B" stroke-width="0.8" fill="none" />
+                  <path d="M20 10 C22 9 24 10 23 13 C22 16 19 16 18 14" stroke="#B8860B" stroke-width="0.7"
+                    fill="#B8860B" fill-opacity="0.1" />
+                </svg>
+                <svg class="absolute bottom-0 right-0 w-20 h-20" viewBox="0 0 80 80" fill="none"
+                  xmlns="http://www.w3.org/2000/svg" style="transform:scale(-1)">
+                  <path d="M8 8 Q8 35 35 35" stroke="#B8860B" stroke-width="1" fill="none" />
+                  <path d="M8 8 C8 8 20 10 25 20 C30 30 35 35 35 35" stroke="#B8860B" stroke-width="0.8" fill="none" />
+                  <circle cx="8" cy="8" r="2.5" fill="#B8860B" />
+                  <circle cx="35" cy="35" r="1.5" fill="#B8860B" />
+                  <path d="M10 20 C12 16 16 12 20 10" stroke="#B8860B" stroke-width="0.8" fill="none" />
+                  <path d="M20 10 C22 9 24 10 23 13 C22 16 19 16 18 14" stroke="#B8860B" stroke-width="0.7"
+                    fill="#B8860B" fill-opacity="0.1" />
+                </svg>
+
+                <!-- Card content -->
+                <div class="relative z-20 flex flex-col items-center w-full px-10 py-10 gap-3">
+                  <!-- Header text -->
+                  <p class="text-[#B8860B] text-[9px] font-bold tracking-[0.25em] uppercase leading-relaxed">SIZNI NIKOH
+                    TO'YIMIZGA<br />TAKLIF QILAMIZ</p>
+
+                  <!-- Gold thin divider -->
+                  <div class="w-24 h-px bg-[#B8860B] opacity-40 my-1"></div>
+
+                  <!-- Groom name -->
+                  <h3 id="card-groom"
+                    class="font-serif text-2xl font-bold uppercase tracking-widest text-[#B8860B] leading-tight transition-all duration-300">
+                    KUYOV ISMI</h3>
+
+                  <!-- Botanical SVG flower -->
+                  <svg width="60" height="70" viewBox="0 0 60 70" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    class="my-1">
+                    <line x1="30" y1="70" x2="30" y2="20" stroke="#B8860B" stroke-width="0.8" />
+                    <line x1="30" y1="50" x2="18" y2="38" stroke="#B8860B" stroke-width="0.8" />
+                    <line x1="30" y1="44" x2="42" y2="32" stroke="#B8860B" stroke-width="0.8" />
+                    <circle cx="30" cy="16" r="4" stroke="#B8860B" stroke-width="0.8" fill="none" />
+                    <circle cx="30" cy="10" r="2.5" stroke="#B8860B" stroke-width="0.7" fill="none" />
+                    <ellipse cx="22" cy="16" rx="5" ry="3" stroke="#B8860B" stroke-width="0.7" fill="none"
+                      transform="rotate(-30 22 16)" />
+                    <ellipse cx="38" cy="16" rx="5" ry="3" stroke="#B8860B" stroke-width="0.7" fill="none"
+                      transform="rotate(30 38 16)" />
+                    <ellipse cx="26" cy="8" rx="4" ry="2.5" stroke="#B8860B" stroke-width="0.7" fill="none"
+                      transform="rotate(-50 26 8)" />
+                    <ellipse cx="34" cy="8" rx="4" ry="2.5" stroke="#B8860B" stroke-width="0.7" fill="none"
+                      transform="rotate(50 34 8)" />
+                    <circle cx="30" cy="14" r="2" fill="#B8860B" fill-opacity="0.3" />
+                    <ellipse cx="15" cy="50" rx="6" ry="3" stroke="#B8860B" stroke-width="0.6" fill="none"
+                      transform="rotate(-40 15 50)" />
+                    <ellipse cx="44" cy="34" rx="6" ry="3" stroke="#B8860B" stroke-width="0.6" fill="none"
+                      transform="rotate(-40 44 34)" />
+                  </svg>
+
+                  <!-- Bride name -->
+                  <h3 id="card-bride"
+                    class="font-serif text-2xl font-bold uppercase tracking-widest text-[#B8860B] leading-tight transition-all duration-300">
+                    KELIN ISMI</h3>
+
+                  <!-- Gold divider with circle medallion -->
+                  <div class="flex items-center gap-2 w-full my-2">
+                    <div class="flex-1 h-px bg-[#B8860B] opacity-50"></div>
+                    <div id="card-day-circle"
+                      class="w-9 h-9 rounded-full border-2 border-[#B8860B] flex items-center justify-center flex-shrink-0">
+                      <span class="text-[#B8860B] text-sm font-bold font-serif">15</span>
+                    </div>
+                    <div class="flex-1 h-px bg-[#B8860B] opacity-50"></div>
+                  </div>
+
+                  <!-- Date row -->
+                  <div id="card-date-row" class="flex items-center justify-between w-full px-2">
+                    <span id="card-weekday"
+                      class="text-[#5c4a1e] text-[10px] font-bold uppercase tracking-widest">SHANBA</span>
+                    <span id="card-month-year"
+                      class="text-[#5c4a1e] text-[10px] font-bold uppercase tracking-widest">SENTYABR, 2025</span>
+                  </div>
+
+                  <!-- Thin divider -->
+                  <div class="w-full h-px bg-[#B8860B] opacity-20 my-1"></div>
+
+                  <!-- Venue -->
+                  <p id="card-venue" class="font-serif text-lg font-bold text-[#3a2c0e] transition-all duration-300">
+                    Versal Saroyi</p>
+                  <p id="card-address"
+                    class="font-serif italic text-[11px] text-[#6b5a2e] leading-relaxed transition-all duration-300 text-center">
+                    Toshkent shahri</p>
+
+                  <!-- Time -->
+                  <p id="card-time" class="text-[#B8860B] text-[10px] font-bold tracking-widest uppercase">SOAT: 18:00
+                    DA</p>
+
+                  <!-- AI generated text box (hidden until generated) -->
+                  <div id="card-ai-box"
+                    class="hidden w-full mt-2 border border-dashed border-[#B8860B]/40 rounded-xl p-4 bg-[#B8860B]/5">
+                    <p id="card-ai-text" class="font-serif italic text-sm text-[#5c4a1e] leading-relaxed text-center">
+                    </p>
+                  </div>
+
+                  <!-- Shimmer skeleton (shown during loading) -->
+                  <div id="card-shimmer" class="hidden w-full mt-2 space-y-2">
+                    <div class="h-3 rounded-full bg-[#B8860B]/20 animate-pulse w-full"></div>
+                    <div class="h-3 rounded-full bg-[#B8860B]/15 animate-pulse w-4/5 mx-auto"></div>
+                    <div class="h-3 rounded-full bg-[#B8860B]/10 animate-pulse w-3/5 mx-auto"></div>
+                  </div>
+
+                  <!-- Bottom label -->
+                  <p class="text-[#B8860B] text-[8px] font-bold tracking-[0.3em] uppercase mt-2">QABUL DAVOM ETADI</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast notification -->
+      <div id="inv-toast" class="fixed bottom-6 right-6 z-50 pointer-events-none"
+        style="transform:translateY(80px);opacity:0;transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275)">
+        <div class="bg-white rounded-2xl shadow-2xl border border-green-100 px-5 py-3 flex items-center gap-3">
+          <div class="w-8 h-8 rounded-xl bg-green-500 flex items-center justify-center flex-shrink-0">
+            <span class="text-white text-sm">✓</span>
+          </div>
+          <p class="font-bold text-gray-900 text-sm">Nusxalandi! ✓</p>
+        </div>
+      </div>
+    </section>
+
+    <style>
+      /* Print styles */
+      @media print {
+        body>*:not(#taklifnoma) {
+          display: none !important;
+        }
+
+        #taklifnoma {
+          padding: 0 !important;
+        }
+
+        .print-card {
+          box-shadow: none !important;
+          width: 100% !important;
+          min-height: 100vh !important;
+        }
+
+        #inv-form,
+        [data-aos],
+        footer,
+        header,
+        .print-hide {
+          display: none !important;
+        }
+      }
+    </style>
+
+    <script>
+      // ===== LIVE card update =====
+      const fields = {
+        groom: document.getElementById('inv-groom'),
+        bride: document.getElementById('inv-bride'),
+        venue: document.getElementById('inv-venue'),
+        address: document.getElementById('inv-address'),
+        date: document.getElementById('inv-date'),
+        time: document.getElementById('inv-time'),
+      };
+      const card = {
+        groom: document.getElementById('card-groom'),
+        bride: document.getElementById('card-bride'),
+        venue: document.getElementById('card-venue'),
+        address: document.getElementById('card-address'),
+        dayCircle: document.getElementById('card-day-circle').querySelector('span'),
+        weekday: document.getElementById('card-weekday'),
+        monthYear: document.getElementById('card-month-year'),
+        time: document.getElementById('card-time'),
+        aiBox: document.getElementById('card-ai-box'),
+        aiText: document.getElementById('card-ai-text'),
+        shimmer: document.getElementById('card-shimmer'),
+      };
+      const WEEKDAYS = ['YAKSHANBA', 'DUSHANBA', 'SESHANBA', 'CHORSHANBA', 'PAYSHANBA', 'JUMA', 'SHANBA'];
+
+      function updateCard() {
+        card.groom.textContent = (fields.groom.value.trim().toUpperCase()) || 'KUYOV ISMI';
+        card.bride.textContent = (fields.bride.value.trim().toUpperCase()) || 'KELIN ISMI';
+        card.venue.textContent = fields.venue.value.trim() || 'Versal Saroyi';
+        card.address.textContent = fields.address.value.trim() || 'Toshkent shahri';
+        card.time.textContent = `SOAT: ${fields.time.value.trim() || '18:00'} DA`;
+        // Parse date
+        const rawDate = fields.date.value.trim();
+        if (rawDate) {
+          // Try to extract day number from "15 Sentyabr, 2025" style
+          const parts = rawDate.split(' ');
+          const dayNum = parseInt(parts[0]) || 15;
+          card.dayCircle.textContent = dayNum;
+          // Reconstruct month + year
+          const rest = parts.slice(1).join(' ');
+          card.monthYear.textContent = rest.toUpperCase() || 'SENTYABR, 2025';
+          // Try to get weekday
+          const monthMap = {
+            'yanvar': 1, 'fevral': 2, 'mart': 3, 'aprel': 4, 'may': 5, 'iyun': 6,
+            'iyul': 7, 'avgust': 8, 'sentyabr': 9, 'oktyabr': 10, 'noyabr': 11, 'dekabr': 12
+          };
+          const monthStr = (parts[1] || '').toLowerCase().replace(',', '');
+          const monthNum = monthMap[monthStr] || 9;
+          const year = parseInt(parts[2]) || 2025;
+          try {
+            const d = new Date(year, monthNum - 1, dayNum);
+            card.weekday.textContent = WEEKDAYS[d.getDay()];
+          } catch (e) { card.weekday.textContent = 'SHANBA'; }
+        } else {
+          card.dayCircle.textContent = '15';
+          card.weekday.textContent = 'SHANBA';
+          card.monthYear.textContent = 'SENTYABR, 2025';
+        }
+      }
+
+      // Attach live listeners
+      Object.values(fields).forEach(f => f.addEventListener('input', updateCard));
+
+      // ===== AI Generation =====
+      document.getElementById('inv-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('inv-btn');
+        const btnText = document.getElementById('inv-btn-text');
+        const spinner = document.getElementById('inv-btn-spinner');
+        const shimmer = document.getElementById('inv-shimmer');
+
+        // Loading state
+        btn.disabled = true;
+        btnText.classList.add('hidden');
+        spinner.classList.remove('hidden');
+        card.aiBox.classList.add('hidden');
+        card.shimmer.classList.remove('hidden');
+        shimmer.style.transform = 'translateX(200%)';
+        setTimeout(() => { shimmer.style.transform = 'translateX(-100%)'; }, 10);
+
+        const prompt = `Kuyov: ${fields.groom.value}, Kelin: ${fields.bride.value}, To'yxona: ${fields.venue.value || 'Versal Saroyi'}, Manzil: ${fields.address.value || "Toshkent shahri"}, Sana: ${fields.date.value || '15 Sentyabr, 2025'}, Soat: ${fields.time.value || '18:00'}. Shu ma'lumotlar asosida o'zbek tilida mehmonlarga murojaat matni yoz.`;
+
+        try {
+          const res = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': 'YOUR_API_KEY',
+              'anthropic-version': '2023-06-01',
+            },
+            body: JSON.stringify({
+              model: 'claude-sonnet-4-20250514',
+              max_tokens: 300,
+              system: "Sen o'zbek tilida to'y taklifnomasi uchun qisqa, she'riy, romantik murojaat matni yozuvchisisisan. Faqat 2-3 ta chiroyli jumla yoz. Boshqa hech narsa yozma.",
+              messages: [{ role: 'user', content: prompt }],
+            }),
+          });
+          if (!res.ok) throw new Error('API error');
+          const data = await res.json();
+          const aiGenerated = data.content?.[0]?.text || '';
+          card.aiText.textContent = aiGenerated;
+          card.shimmer.classList.add('hidden');
+          card.aiBox.classList.remove('hidden');
+          card.aiBox.style.animation = 'fadeInAI 0.6s ease forwards';
+        } catch (err) {
+          // Fallback: show poetic placeholder
+          card.aiText.textContent = `Aziz mehmonlar, qalbimizning sevincli kunida sizlarni nikoh to'yimizga taklif etamiz. Sizning ishtirokingiz bu muborak kechaga yanada nur bag'ishlaydi. Ko'rishgunga qadar sog'-salomat bo'ling!`;
+          card.shimmer.classList.add('hidden');
+          card.aiBox.classList.remove('hidden');
+          card.aiBox.style.animation = 'fadeInAI 0.6s ease forwards';
+        } finally {
+          btn.disabled = false;
+          btnText.classList.remove('hidden');
+          spinner.classList.add('hidden');
+        }
+      });
+
+      // ===== Copy invitation =====
+      function copyInvitation() {
+        const g = fields.groom.value || 'Kuyov';
+        const b = fields.bride.value || 'Kelin';
+        const v = fields.venue.value || 'To\'yxona';
+        const a = fields.address.value || 'Manzil';
+        const d = fields.date.value || '15 Sentyabr, 2025';
+        const t = fields.time.value || '18:00';
+        const ai = card.aiText.textContent;
+        const text = `SIZNI NIKOH TO'YIMIZGA TAKLIF QILAMIZ\n\n${g.toUpperCase()} & ${b.toUpperCase()}\n\nSana: ${d}\nSoat: ${t}\nJoy: ${v}\nManzil: ${a}${ai ? '\n\n' + ai : ''}\n\nQABUL DAVOM ETADI`;
+        navigator.clipboard.writeText(text).then(() => {
+          const toast = document.getElementById('inv-toast');
+          toast.style.transform = 'translateY(0)';
+          toast.style.opacity = '1';
+          setTimeout(() => { toast.style.transform = 'translateY(80px)'; toast.style.opacity = '0'; }, 2800);
+        });
+      }
+      window.copyInvitation = copyInvitation;
+
+      // ===== Print =====
+      function printInvitation() { window.print(); }
+      window.printInvitation = printInvitation;
+    </script>
+
+    <style>
+      @keyframes fadeInAI {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </main>
+  <footer class="bg-gray-100 border-t border-gray-200 pt-16 pb-8 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div class="space-y-4">
+          <div class="flex items-center gap-2">
+            <div class="size-8 rounded-full bg-gradient-romantic flex items-center justify-center text-white">
+              <span class="material-symbols-outlined text-[20px]">diamond</span>
+            </div>
+            <span class="text-2xl font-serif font-bold text-text-main tracking-wide">Toy<span
+                class="text-secondary">Xona</span></span>
+          </div>
+          <p class="text-text-muted text-sm leading-relaxed">
+            Baxtli onlaringizni biz bilan rejalashtiring. O'zbekistonning barcha hududlaridagi eng yaxshi to'yxonalar
+            bir joyda.
+          </p>
+          <div class="flex gap-4">
+            <a class="size-10 rounded-full bg-white border border-gray-300 shadow-sm flex items-center justify-center text-text-muted hover:bg-primary hover:text-white hover:border-transparent transition-colors"
+              href="#">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z">
+                </path>
+              </svg>
+            </a>
+            <a class="size-10 rounded-full bg-white border border-gray-300 shadow-sm flex items-center justify-center text-text-muted hover:bg-primary hover:text-white hover:border-transparent transition-colors"
+              href="#">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.072 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.85-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z">
+                </path>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-text-main font-bold mb-6">Kompaniya</h4>
+          <ul class="space-y-3 text-text-muted text-sm">
+            <li><a class="hover:text-primary transition-colors" href="#">Biz haqimizda</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#">Jamoa</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#">Karyera</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-text-main font-bold mb-6">Yordam</h4>
+          <ul class="space-y-3 text-text-muted text-sm">
+            <li><a class="hover:text-primary transition-colors" href="#">Qo'llab-quvvatlash</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#">Foydalanish shartlari</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#">Maxfiylik siyosati</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#">FAQ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-text-main font-bold mb-6">Aloqa</h4>
+          <ul class="space-y-3 text-text-muted text-sm">
+            <li class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[18px]">phone</span>
+              <span>+998 90 123 45 67</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[18px]">mail</span>
+              <span>info@toyxona.uz</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[18px]">location_on</span>
+              <span>Toshkent sh., Amir Temur 108</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="text-text-muted text-sm">© 2024 ToyXona. Barcha huquqlar himoyalangan.</p>
+        <div class="flex items-center gap-2">
+          <span class="text-text-muted text-sm">Tilni tanlang:</span>
+          <button class="text-text-main text-sm font-medium hover:text-primary">O'zbek</button>
+          <span class="text-gray-400">|</span>
+          <button class="text-text-muted text-sm font-medium hover:text-primary">Русский</button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- AOS init -->
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <!-- Shared app logic -->
+  <script src="assets/js/app.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollToPlugin);
+
+    // ---- GSAP Hero entrance ----
+    const heroTl = gsap.timeline({ delay: 0.2 });
+    heroTl
+      .from('[data-hero="badge"]', { opacity: 0, y: -20, duration: 0.6, ease: 'power3.out' })
+      .from('[data-hero="h1"]', { opacity: 0, y: 40, duration: 0.7, ease: 'power3.out' }, '-=0.3')
+      .from('[data-hero="p"]', { opacity: 0, y: 30, duration: 0.6, ease: 'power3.out' }, '-=0.4')
+      .from('[data-hero="search"]', { opacity: 0, y: 20, duration: 0.5, ease: 'power3.out' }, '-=0.3')
+      .from('[data-hero="stats"]', { opacity: 0, x: -20, stagger: 0.15, duration: 0.5, ease: 'power3.out' }, '-=0.2');
+
+    // ---- GSAP Smooth scroll for nav links ----
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (!target) return;
+        e.preventDefault();
+        gsap.to(window, { scrollTo: target, duration: 1, ease: 'power3.inOut' });
+      });
+    });
+
+    // ---- AOS init ----
+    AOS.init({ duration: 800, once: true });
+
+    // ---- Category filter logic ----
+    let allVenues = [];
+    let activeCategory = 'all';
+
+    const grid = document.getElementById('venues-grid');
+    const pills = document.querySelectorAll('.pill-btn');
+    const apiError = document.getElementById('api-error');
+
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        activeCategory = pill.dataset.cat;
+        pills.forEach(p => {
+          p.classList.remove('pill-active');
+          p.classList.add('pill-inactive');
+        });
+        pill.classList.remove('pill-inactive');
+        pill.classList.add('pill-active');
+
+        const filtered = activeCategory === 'all'
+          ? allVenues
+          : allVenues.filter(v => v.category === activeCategory);
+
+        window.ToyXonaApp.renderCards(filtered, grid);
+        window.ToyXonaApp.animateCards(grid.querySelectorAll('.venue-card'));
+      });
+    });
+
+    // ---- Fetch and render on load ----
+    (async () => {
+      try {
+        allVenues = await window.ToyXonaApp.fetchVenues();
+        window.ToyXonaApp.renderCards(allVenues, grid);
+        window.ToyXonaApp.animateCards(grid.querySelectorAll('.venue-card'));
+        AOS.refresh();
+      } catch (err) {
+        grid.innerHTML = '';
+        apiError.classList.remove('hidden');
+      }
+    })();
+  </script>
+
+</body>
+
+</html>
