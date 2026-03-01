@@ -170,20 +170,9 @@
               Orzuingizdagi to'yni rejalashtiring va eng yaxshi takliflarni toping. Biz sizga eng hashamatli restoran va
               bazmgohlarni taqdim etamiz.
             </p>
-            <div data-hero="search"
-              class="glass p-2 rounded-2xl flex flex-col sm:flex-row gap-2 max-w-xl w-full mt-4 ring-1 ring-white/50 shadow-xl shadow-primary/5">
-              <div class="flex-1 flex items-center px-4 h-14 bg-white/60 rounded-xl border border-white/40">
-                <span class="material-symbols-outlined text-text-muted mr-3">search</span>
-                <input
-                  class="bg-transparent border-none focus:ring-0 text-text-main placeholder-text-muted/70 w-full h-full text-base"
-                  placeholder="To'yxona nomi yoki manzil" type="text" />
-              </div>
-              <button
-                class="bg-gradient-romantic h-14 px-8 rounded-xl text-white font-bold text-base shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all flex items-center justify-center gap-2 sm:w-auto w-full">
-                Qidirish
-              </button>
-            </div>
-            <div class="flex items-center gap-6 text-sm text-text-muted pt-2">
+            <a class="bg-gradient-romantic hover:opacity-90 transition-opacity text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-primary/30 flex items-center gap-2 w-fit"
+              href="#taklifnoma">Taklifnoma yaratish</a>
+            <!-- <div class="flex items-center gap-6 text-sm text-text-muted pt-2">
               <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-gold">verified</span>
                 <span>500+ To'yxonalar</span>
@@ -192,7 +181,7 @@
                 <span class="material-symbols-outlined text-gold">favorite</span>
                 <span>10k+ Baxtli juftliklar</span>
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="relative h-[600px] w-full hidden lg:block">
             <div
@@ -248,6 +237,45 @@
             class="pill-btn pill-inactive px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300">Boshlovchilar</button>
         </div>
 
+        <!-- Viloyat / Tuman filter row -->
+        <div class="flex flex-wrap gap-4 mb-8" id="location-filters" data-aos="fade-up" data-aos-delay="150">
+          <div class="relative">
+            <select id="sel-viloyat"
+              class="appearance-none w-[220px] px-4 py-3 pr-10 rounded-2xl border border-[#e8d5f5] bg-white text-sm font-medium text-gray-700 outline-none cursor-pointer transition-all focus:border-secondary focus:ring-2 focus:ring-secondary/20">
+              <option value="">Barcha viloyatlar</option>
+              <option value="Toshkent shahri">Toshkent shahri</option>
+              <option value="Toshkent viloyati">Toshkent viloyati</option>
+              <option value="Samarqand">Samarqand</option>
+              <option value="Buxoro">Buxoro</option>
+              <option value="Namangan">Namangan</option>
+              <option value="Andijon">Andijon</option>
+              <option value="Farg'ona">Farg'ona</option>
+              <option value="Qashqadaryo">Qashqadaryo</option>
+              <option value="Surxondaryo">Surxondaryo</option>
+              <option value="Xorazm">Xorazm</option>
+              <option value="Navoiy">Navoiy</option>
+              <option value="Jizzax">Jizzax</option>
+              <option value="Sirdaryo">Sirdaryo</option>
+              <option value="Qoraqalpog'iston">Qoraqalpog'iston</option>
+            </select>
+            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#9333EA] text-lg">▾</span>
+          </div>
+          <div class="relative">
+            <select id="sel-tuman"
+              class="appearance-none w-[220px] px-4 py-3 pr-10 rounded-2xl border border-[#e8d5f5] bg-white text-sm font-medium text-gray-700 outline-none cursor-pointer transition-all focus:border-secondary focus:ring-2 focus:ring-secondary/20">
+              <option value="">Barcha tumanlar</option>
+            </select>
+            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#9333EA] text-lg">▾</span>
+          </div>
+          <!-- Active filter badge -->
+          <div id="filter-badge"
+            class="hidden items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/30 text-sm font-semibold text-secondary cursor-pointer hover:bg-secondary/20 transition-all"
+            onclick="clearLocationFilter()">
+            <span id="filter-badge-text"></span>
+            <span class="text-xs">✕</span>
+          </div>
+        </div>
+
         <!-- Venue cards grid -->
         <div id="venues-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[300px]">
           <!-- Cards injected by JS -->
@@ -260,6 +288,9 @@
           </div>
         </div>
 
+        <!-- Pagination -->
+        <div id="pagination" class="flex justify-center mt-10"></div>
+
         <!-- Server error fallback (hidden by default) -->
         <div id="api-error" class="hidden mt-8 text-center bg-orange-50 border border-orange-200 rounded-2xl p-8">
           <span class="material-symbols-outlined text-5xl text-orange-300 mb-3 block">wifi_off</span>
@@ -270,6 +301,343 @@
 
       </div>
     </section>
+    <!-- ========== BRON MODAL ========== -->
+    <div id="bron-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden"
+      style="background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)">
+      <div id="bron-modal" class="bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        style="transform:scale(0.9);opacity:0;transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275),opacity 0.3s ease">
+
+        <!-- Modal header -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-100">
+          <div class="flex items-center gap-3">
+            <img id="modal-img" src="" alt="" class="w-14 h-14 rounded-xl object-cover bg-gray-100"
+              onerror="this.src='https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=200'">
+            <div>
+              <h3 id="modal-title" class="font-serif text-lg font-bold text-gray-900"></h3>
+              <p id="modal-location" class="text-xs text-gray-400 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px] text-secondary">location_on</span>
+                <span></span>
+              </p>
+            </div>
+          </div>
+          <button onclick="closeBronModal()"
+            class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 font-bold transition-all">✕</button>
+        </div>
+
+        <!-- Calendar -->
+        <div class="p-6 pb-3">
+          <p class="text-sm font-bold text-gray-700 mb-4">📅 Mavjud sanalarni tanlang</p>
+          <!-- Month nav -->
+          <div class="flex items-center justify-between mb-4">
+            <button onclick="prevMonth()"
+              class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition-all">←</button>
+            <span id="cal-month-label" class="font-bold text-gray-800 text-sm"></span>
+            <button onclick="nextMonth()"
+              class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition-all">→</button>
+          </div>
+          <!-- Day headers -->
+          <div class="grid grid-cols-7 mb-2">
+            <span class="text-center text-[11px] font-bold text-gray-400">Du</span>
+            <span class="text-center text-[11px] font-bold text-gray-400">Se</span>
+            <span class="text-center text-[11px] font-bold text-gray-400">Ch</span>
+            <span class="text-center text-[11px] font-bold text-gray-400">Pa</span>
+            <span class="text-center text-[11px] font-bold text-gray-400">Ju</span>
+            <span class="text-center text-[11px] font-bold text-text-main font-extrabold">Sh</span>
+            <span class="text-center text-[11px] font-bold text-red-400">Ya</span>
+          </div>
+          <!-- Day cells -->
+          <div id="cal-grid" class="grid grid-cols-7 gap-1"></div>
+          <!-- Selected date display -->
+          <p id="selected-date-label" class="mt-4 text-sm font-semibold hidden">
+            Tanlangan sana: <span id="selected-date-text" class=""
+              style="background:linear-gradient(135deg,#FF3CAC,#9333EA);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent"></span>
+          </p>
+        </div>
+
+        <!-- Fields -->
+        <div class="px-6 pb-4 space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1.5">Mehmonlar soni</label>
+            <input id="modal-guests" type="number" min="50" max="2000" placeholder="Masalan: 300"
+              class="w-full px-4 py-3 rounded-xl border border-[#e8d5f5] text-sm text-gray-800 bg-gray-50 outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1.5">Telefon raqam</label>
+            <div class="flex">
+              <span
+                class="flex items-center px-4 bg-gray-100 border border-r-0 border-[#e8d5f5] rounded-l-xl text-sm text-gray-500 font-semibold">+998</span>
+              <input id="modal-phone" type="tel" placeholder="90 123 45 67" maxlength="12"
+                class="flex-1 px-4 py-3 rounded-r-xl border border-[#e8d5f5] text-sm text-gray-800 bg-gray-50 outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal footer -->
+        <div class="flex gap-3 px-6 pb-6">
+          <button onclick="closeBronModal()"
+            class="flex-1 py-3 rounded-full border-2 border-gray-200 text-gray-600 font-bold text-sm hover:bg-gray-50 transition-all">Bekor
+            qilish</button>
+          <button onclick="confirmBron()"
+            class="flex-1 py-3 rounded-full text-white font-bold text-sm shadow-lg transition-all"
+            style="background:linear-gradient(135deg,#FF3CAC 0%,#9333EA 100%);box-shadow:0 6px 20px rgba(147,51,234,0.3)">✓
+            Bronni tasdiqlash</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bron success toast -->
+    <div id="bron-toast" class="fixed bottom-6 right-6 z-[60] pointer-events-none"
+      style="transform:translateY(90px);opacity:0;transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275)">
+      <div class="bg-white rounded-2xl shadow-2xl border border-green-100 px-5 py-4 flex items-start gap-3 max-w-xs">
+        <div class="w-9 h-9 rounded-xl bg-green-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+          <span class="text-white font-bold text-sm">✓</span>
+        </div>
+        <div>
+          <p class="font-bold text-gray-900 text-sm">Muvaffaqiyatli bron qilindi!</p>
+          <p class="text-gray-500 text-xs mt-0.5">Tez orada siz bilan bog'lanamiz ✓</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ===========================
+      // VILOYAT / TUMAN FILTERS
+      // ===========================
+      const TUMAN_MAP = {
+        'Toshkent shahri': ['Chilonzor', 'Yunusobod', 'Mirzo Ulug\'bek', 'Shayxontohur', 'Olmazor', 'Yakkasaroy', 'Uchtepa', 'Bektemir', 'Sergeli', 'Mirobod'],
+        'Toshkent viloyati': ['Ohangaron', 'Chirchiq', 'Angren', 'Bekobod', 'Bo\'stonliq', 'Zangiota', 'Qibray', 'Yuqorichirchiq', 'Toshkent tumani', 'Urtachirchiq'],
+        'Samarqand': ['Samarqand shahri', 'Bulung\'ur', 'Jomboy', 'Kattaqo\'rg\'on', 'Narpay', 'Nurobod', 'Oqdaryo', 'Payariq', 'Pastdarg\'om', 'Toyloq'],
+        'Buxoro': ['Buxoro shahri', 'G\'ijduvon', 'Jondor', 'Kogon', 'Qorovulbozor', 'Romitan', 'Shofirkon', 'Vobkent', 'Peshku', 'Olot'],
+        'Namangan': ['Namangan shahri', 'Chortoq', 'Chust', 'Kosonsoy', 'Mingbuloq', 'Norin', 'Pop', 'To\'raqo\'rg\'on', 'Uychi', 'Yangiqo\'rg\'on'],
+        'Andijon': ['Andijon shahri', 'Asaka', 'Baliqchi', 'Bo\'z', 'Buloqboshi', 'Jalaquduq', 'Xo\'jaobod', 'Izboskan', 'Marhamat', 'Oltinko\'l'],
+        'Farg\'ona': ['Farg\'ona shahri', 'Qo\'qon', 'Marg\'ilon', 'Oltiariq', 'Bag\'dod', 'Beshariq', 'Buvayda', 'Dang\'ara', 'Hamza', 'O\'zbekiston'],
+        'Qashqadaryo': ['Qarshi shahri', 'Shahrisabz', 'G\'uzor', 'Dehqonobod', 'Kasbi', 'Kitob', 'Koson', 'Mirishkor', 'Muborak', 'Nishon'],
+        'Surxondaryo': ['Termiz shahri', 'Angor', 'Bandixon', 'Denov', 'Jarqo\'rg\'on', 'Muzrabot', 'Qiziriq', 'Sariosiyo', 'Sherobod', 'Uchqizil'],
+        'Xorazm': ['Urganch shahri', 'Xiva', 'Bog\'ot', 'Gurlan', 'Hazorasp', 'Khonqa', 'Shovot', 'Tuproqqal\'a', 'Yangiariq', 'Yangibozor'],
+        'Navoiy': ['Navoiy shahri', 'Zarafshon', 'Karmana', 'Konimex', 'Navbahor', 'Nurota', 'Qiziltepa', 'Tomdi', 'Uchquduq', 'Xatirchi'],
+        'Jizzax': ['Jizzax shahri', 'Arnasoy', 'Baxmal', 'Do\'stlik', 'Forish', 'G\'allaorol', 'Mirzacho\'l', 'Paxtakor', 'Yangiobod', 'Zarbdor'],
+        'Sirdaryo': ['Guliston shahri', 'Boyovut', 'Xavast', 'Mirzaobod', 'Oqoltin', 'Sardoba', 'Sayxunobod', 'Shirin', 'Sirdaryo tumani'],
+        'Qoraqalpog\'iston': ['Nukus', 'Amudaryo', 'Beruniy', 'Chimboy', 'Ellikkala', 'Kegeyli', 'Mo\'ynoq', 'Qonliko\'l', 'Qo\'ng\'irot', 'Taxtako\'pir'],
+      };
+
+      const selViloyat = document.getElementById('sel-viloyat');
+      const selTuman = document.getElementById('sel-tuman');
+      const filterBadge = document.getElementById('filter-badge');
+      const filterBadgeText = document.getElementById('filter-badge-text');
+
+      selViloyat.addEventListener('change', () => {
+        const v = selViloyat.value;
+        selTuman.innerHTML = '<option value="">Barcha tumanlar</option>';
+        if (v && TUMAN_MAP[v]) {
+          TUMAN_MAP[v].forEach(t => {
+            const o = document.createElement('option');
+            o.value = t; o.textContent = t;
+            selTuman.appendChild(o);
+          });
+        }
+        applyLocationFilter();
+      });
+
+      selTuman.addEventListener('change', applyLocationFilter);
+
+      function applyLocationFilter() {
+        const v = selViloyat.value;
+        const t = selTuman.value;
+        const filtered = window._allVenues ? window._allVenues.filter(venue => {
+          const loc = (venue.location || '').toLowerCase();
+          const catOk = window._activeCategory === 'all' || venue.category === window._activeCategory;
+
+          // Viloyat match: check if location contains viloyat name itself,
+          // OR contains any of its tumanlar/cities (handles "Termiz" → Surxondaryo)
+          let vilOk = !v;
+          if (v) {
+            if (loc.includes(v.toLowerCase())) {
+              vilOk = true;
+            } else if (TUMAN_MAP[v]) {
+              vilOk = TUMAN_MAP[v].some(tuman => {
+                // Strip " shahri" / " tumani" suffix for broader matching
+                const core = tuman.toLowerCase()
+                  .replace(' shahri', '').replace(' tumani', '').trim();
+                return loc.includes(core);
+              });
+            }
+          }
+
+          // Tuman match: strip " shahri" / " tumani" suffix before compare
+          let tumOk = !t;
+          if (t) {
+            const tCore = t.toLowerCase()
+              .replace(' shahri', '').replace(' tumani', '').trim();
+            tumOk = loc.includes(tCore);
+          }
+
+          return catOk && vilOk && tumOk;
+        }) : [];
+        // Reset to page 1 when filter changes
+        const pg = (typeof window._currentPage === 'function') ? window._currentPage() : 1;
+        window.ToyXonaApp.renderCards(filtered, document.getElementById('venues-grid'), pg);
+        window.ToyXonaApp.animateCards(document.getElementById('venues-grid').querySelectorAll('.venue-card'));
+        // Badge
+        if (v || t) {
+          filterBadgeText.textContent = [v, t].filter(Boolean).join(' › ');
+          filterBadge.classList.remove('hidden');
+          filterBadge.classList.add('flex');
+        } else {
+          filterBadge.classList.add('hidden');
+          filterBadge.classList.remove('flex');
+        }
+      }
+
+      function clearLocationFilter() {
+        selViloyat.value = '';
+        selTuman.innerHTML = '<option value="">Barcha tumanlar</option>';
+        filterBadge.classList.add('hidden');
+        filterBadge.classList.remove('flex');
+        applyLocationFilter();
+      }
+      window.clearLocationFilter = clearLocationFilter;
+
+      // ===========================
+      // BOOKING MODAL + CALENDAR
+      // ===========================
+      let _calYear, _calMonth, _selectedDate = null;
+      const UZ_MONTHS = ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentyabr', 'Oktyabr', 'Noyabr', 'Dekabr'];
+
+      function isWeekend(y, m, d) {
+        const day = new Date(y, m, d).getDay();
+        return day === 0 || day === 6; // Sun=0, Sat=6
+      }
+      function isPast(y, m, d) {
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        return new Date(y, m, d) < today;
+      }
+      function isToday(y, m, d) {
+        const t = new Date();
+        return y === t.getFullYear() && m === t.getMonth() && d === t.getDate();
+      }
+
+      function renderCalendar() {
+        const grid = document.getElementById('cal-grid');
+        const label = document.getElementById('cal-month-label');
+        label.textContent = UZ_MONTHS[_calMonth] + ' ' + _calYear;
+        grid.innerHTML = '';
+        const firstDay = new Date(_calYear, _calMonth, 1).getDay(); // 0=Sun
+        // Convert: Mon=0 ... Sun=6
+        const startOffset = (firstDay + 6) % 7;
+        const daysInMonth = new Date(_calYear, _calMonth + 1, 0).getDate();
+        // Empty cells
+        for (let i = 0; i < startOffset; i++) {
+          const empty = document.createElement('div');
+          grid.appendChild(empty);
+        }
+        for (let d = 1; d <= daysInMonth; d++) {
+          const cell = document.createElement('button');
+          cell.type = 'button';
+          cell.textContent = d;
+          const past = isPast(_calYear, _calMonth, d);
+          const weekend = isWeekend(_calYear, _calMonth, d);
+          const today = isToday(_calYear, _calMonth, d);
+          const selKey = `${_calYear}-${_calMonth}-${d}`;
+          const isSel = _selectedDate === selKey;
+
+          cell.className = 'w-full aspect-square rounded-xl text-xs font-bold flex items-center justify-center transition-all duration-150 relative';
+
+          if (isSel) {
+            cell.style.cssText = 'background:linear-gradient(135deg,#FF3CAC,#9333EA);color:#fff;transform:scale(1.1);box-shadow:0 4px 12px rgba(147,51,234,0.4)';
+          } else if (past) {
+            cell.className += ' text-gray-300 cursor-not-allowed bg-gray-50';
+          } else if (weekend) {
+            cell.className += ' bg-red-50 text-red-400 cursor-not-allowed line-through';
+            cell.title = 'Band';
+          } else if (today) {
+            cell.className += ' bg-purple-50 text-purple-600 border-2 border-purple-300 cursor-pointer hover:opacity-80';
+          } else {
+            cell.className += ' bg-white text-gray-700 cursor-pointer border border-gray-100 hover:text-white hover:border-transparent';
+            cell.onmouseenter = () => { if (!weekend && !past) cell.style.cssText = 'background:linear-gradient(135deg,#FF3CAC,#9333EA);color:#fff'; };
+            cell.onmouseleave = () => { if (_selectedDate !== selKey) cell.style.cssText = ''; };
+          }
+
+          if (!past && !weekend) {
+            cell.addEventListener('click', () => {
+              _selectedDate = selKey;
+              const label = document.getElementById('selected-date-label');
+              const text = document.getElementById('selected-date-text');
+              text.textContent = `${d} ${UZ_MONTHS[_calMonth]}, ${_calYear}`;
+              label.classList.remove('hidden');
+              renderCalendar();
+            });
+          }
+          grid.appendChild(cell);
+        }
+      }
+
+      function prevMonth() {
+        _calMonth--;
+        if (_calMonth < 0) { _calMonth = 11; _calYear--; }
+        _selectedDate = null;
+        document.getElementById('selected-date-label').classList.add('hidden');
+        renderCalendar();
+      }
+      function nextMonth() {
+        _calMonth++;
+        if (_calMonth > 11) { _calMonth = 0; _calYear++; }
+        _selectedDate = null;
+        document.getElementById('selected-date-label').classList.add('hidden');
+        renderCalendar();
+      }
+      window.prevMonth = prevMonth;
+      window.nextMonth = nextMonth;
+
+      function openBronModal(btn) {
+        const overlay = document.getElementById('bron-overlay');
+        const modal = document.getElementById('bron-modal');
+        document.getElementById('modal-title').textContent = btn.dataset.title;
+        document.getElementById('modal-img').src = btn.dataset.image || '';
+        document.getElementById('modal-location').querySelector('span:last-child').textContent = btn.dataset.location;
+        _selectedDate = null;
+        document.getElementById('selected-date-label').classList.add('hidden');
+        document.getElementById('modal-guests').value = '';
+        document.getElementById('modal-phone').value = '';
+        const now = new Date();
+        _calYear = now.getFullYear();
+        _calMonth = now.getMonth();
+        renderCalendar();
+        overlay.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          modal.style.transform = 'scale(1)';
+          modal.style.opacity = '1';
+        });
+      }
+      window.openBronModal = openBronModal;
+
+      function closeBronModal() {
+        const overlay = document.getElementById('bron-overlay');
+        const modal = document.getElementById('bron-modal');
+        modal.style.transform = 'scale(0.9)';
+        modal.style.opacity = '0';
+        setTimeout(() => overlay.classList.add('hidden'), 300);
+      }
+      window.closeBronModal = closeBronModal;
+
+      // Close on overlay click
+      document.getElementById('bron-overlay').addEventListener('click', e => {
+        if (e.target === document.getElementById('bron-overlay')) closeBronModal();
+      });
+
+      function showBronToast() {
+        const t = document.getElementById('bron-toast');
+        t.style.transform = 'translateY(0)';
+        t.style.opacity = '1';
+        setTimeout(() => { t.style.transform = 'translateY(90px)'; t.style.opacity = '0'; }, 3000);
+      }
+
+      function confirmBron() {
+        closeBronModal();
+        setTimeout(showBronToast, 350);
+      }
+      window.confirmBron = confirmBron;
+    </script>
+
     <!-- ========== AI TAKLIFNOMA SECTION ========== -->
     <section id="taklifnoma" class="py-24 relative overflow-hidden">
       <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent -z-10"></div>
@@ -284,7 +652,7 @@
               class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-secondary/40 bg-gradient-to-r from-secondary/10 to-primary/10 w-fit">
               <span class="text-transparent bg-clip-text"
                 style="background:linear-gradient(135deg,#FF3CAC,#9333EA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;font-size:0.75rem;letter-spacing:0.08em;">✦
-                YANGI FUNKSIYA</span>
+                AI TAKLIFNOMA</span>
             </div>
             <!-- Heading -->
             <div>
@@ -366,7 +734,7 @@
           </div>
 
           <!-- ===== RIGHT: INVITATION CARD ===== -->
-          <div class="flex justify-center" data-aos="fade-left">
+          <div class="flex justify-center min-w-0" data-aos="fade-left">
             <div class="relative">
               <!-- Glow -->
               <div class="absolute inset-0 bg-[#B8860B]/15 blur-[50px] rounded-full scale-90 translate-y-4"></div>
@@ -836,14 +1204,34 @@
     // ---- Category filter logic ----
     let allVenues = [];
     let activeCategory = 'all';
+    let currentPage = 1;
 
     const grid = document.getElementById('venues-grid');
     const pills = document.querySelectorAll('.pill-btn');
     const apiError = document.getElementById('api-error');
 
+    // Expose goToPage globally for pagination button onclick
+    window.goToPage = function (page) {
+      currentPage = page;
+      // Scroll to top of kategoriya section
+      const sec = document.getElementById('kategoriya');
+      if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (typeof applyLocationFilter === 'function') {
+        applyLocationFilter();
+      } else {
+        const filtered = activeCategory === 'all'
+          ? allVenues
+          : allVenues.filter(v => v.category === activeCategory);
+        window.ToyXonaApp.renderCards(filtered, grid, currentPage);
+        window.ToyXonaApp.animateCards(grid.querySelectorAll('.venue-card'));
+      }
+    };
+
     pills.forEach(pill => {
       pill.addEventListener('click', () => {
         activeCategory = pill.dataset.cat;
+        window._activeCategory = activeCategory;
+        currentPage = 1; // reset on filter change
         pills.forEach(p => {
           p.classList.remove('pill-active');
           p.classList.add('pill-inactive');
@@ -851,12 +1239,15 @@
         pill.classList.remove('pill-inactive');
         pill.classList.add('pill-active');
 
-        const filtered = activeCategory === 'all'
-          ? allVenues
-          : allVenues.filter(v => v.category === activeCategory);
-
-        window.ToyXonaApp.renderCards(filtered, grid);
-        window.ToyXonaApp.animateCards(grid.querySelectorAll('.venue-card'));
+        if (typeof applyLocationFilter === 'function') {
+          applyLocationFilter();
+        } else {
+          const filtered = activeCategory === 'all'
+            ? allVenues
+            : allVenues.filter(v => v.category === activeCategory);
+          window.ToyXonaApp.renderCards(filtered, grid, currentPage);
+          window.ToyXonaApp.animateCards(grid.querySelectorAll('.venue-card'));
+        }
       });
     });
 
@@ -864,7 +1255,10 @@
     (async () => {
       try {
         allVenues = await window.ToyXonaApp.fetchVenues();
-        window.ToyXonaApp.renderCards(allVenues, grid);
+        window._allVenues = allVenues;
+        window._activeCategory = 'all';
+        window._currentPage = () => currentPage;
+        window.ToyXonaApp.renderCards(allVenues, grid, currentPage);
         window.ToyXonaApp.animateCards(grid.querySelectorAll('.venue-card'));
         AOS.refresh();
       } catch (err) {
